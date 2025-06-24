@@ -50,7 +50,7 @@ def load_instruments(folder: PathLike | str, island_id: int, skip_paironormals: 
 		file_str: str = str(file).lower()
 		if ((
 			skip_paironormals and
-			re.match(r'\d{3}_I\d{2}.bin', path.split(file_str)[1]) is not None
+			re.match(r'\d{3}_i\d{2}.bin', path.split(file_str)[1]) is not None
 		) or (
 			'prop' in file_str and
 			'finale' not in file_str
