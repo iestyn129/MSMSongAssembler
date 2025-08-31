@@ -1,12 +1,12 @@
+from midi_parser import MidiData
 from os import PathLike
 from pathlib import Path
-from shutil import rmtree
-from sys import argv
 from pydub import AudioSegment
 from pydub.effects import normalize
-
-from midi_parser import MidiData
 from song_data import Song, Track, Note
+from shutil import rmtree
+from sys import argv
+#from swing import swing
 
 
 def main() -> None:
@@ -51,6 +51,7 @@ def main() -> None:
 				song_audio = song_audio.overlay(note_audio, position=note.start * 1000)
 
 		song_audio = normalize(song_audio)
+		#song_audio = swing(song_audio, song.bpm)
 		song_audio.export(
 			output_folder.joinpath(song.name + '.mp3'),
 			format='mp3',
