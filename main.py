@@ -2,7 +2,8 @@ from midi_parser import MidiData
 from os import PathLike
 from pathlib import Path
 from pydub import AudioSegment
-from pydub.effects import normalize
+from pydub.effects import normalize#, pan
+#from random import uniform
 from song_data import Song, Track, Note
 from shutil import rmtree
 from sys import argv
@@ -34,13 +35,15 @@ def main() -> None:
 
 		track: Track
 		for track in song.tracks:
+			#if not track.name.startswith('Q0'):
+			#	continue
 			print(f'\tAdding {track.name}...')
 			audios: dict[int, AudioSegment] = {
 				audio_note: AudioSegment.from_wav(audio_folder.joinpath(audio)) - 12
 				for audio_note, audio in track.instrument.tracks.items()
 			}
 
-			note: Note
+			note: Note#; direction: float = uniform(-.75, .75)
 			for note in track.notes:
 				if note.note not in audios:
 					# many islands have misclicks and old data in their midis
@@ -48,6 +51,7 @@ def main() -> None:
 					continue
 
 				note_audio: AudioSegment = audios.get(note.note)[:(note.end - note.start) * 1000]
+				#note_audio = pan(note_audio, direction)
 				song_audio = song_audio.overlay(note_audio, position=note.start * 1000)
 
 		song_audio = normalize(song_audio)
