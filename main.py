@@ -35,7 +35,7 @@ def main() -> None:
 
 		track: Track
 		for track in song.tracks:
-			#if not track.name.startswith('Q0'):
+			#if not track.name.startswith('Q'):
 			#	continue
 			print(f'\tAdding {track.name}...')
 			audios: dict[int, AudioSegment] = {

@@ -1,3 +1,4 @@
+from collections import deque
 from dataclasses import dataclass
 from mido import MidiFile as MidoFile, MidiTrack as MidoTrack, Message as MidoMessage
 from os import path, PathLike
@@ -40,7 +41,7 @@ class MidiData:
 			track_notes: list[MidiNote] = []
 
 			current_time: int = 0
-			note_starts: dict[int, int] = {}
+			note_starts: dict[int, deque[int]] = {}
 			msg: MidoMessage
 			for msg in track:
 				msg_data: dict = msg.dict()
@@ -52,10 +53,13 @@ class MidiData:
 					case 'set_tempo':
 						bpm = 60_000_000 // msg_data.get('tempo')
 					case 'note_on':
-						note_starts[msg_data.get('note')] = current_time
+						note: int = msg_data.get('note')
+						if note not in note_starts:
+							note_starts[note] = deque()
+						note_starts[note].append(current_time)
 					case 'note_off':
 						note: int = msg_data.get('note')
-						start: int = note_starts.get(note)
+						start: int = note_starts.get(note).popleft()
 						track_notes.append(MidiNote(note, start, current_time))
 
 			tracks.append(MidiTrack(name=track_name, notes=track_notes))
