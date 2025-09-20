@@ -86,6 +86,8 @@ class Song:
 				midi.tpb
 			))
 
+		tracks.sort(key=lambda track: track.name)
+
 		return cls(
 			name=midi.name,
 			island_id=island_id,
