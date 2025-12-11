@@ -39,7 +39,7 @@ def main() -> None:
 			#	continue
 			print(f'\tAdding {track.name}...')
 			audios: dict[int, AudioSegment] = {
-				audio_note: AudioSegment.from_wav(audio_folder.joinpath(audio)) - 12
+				audio_note: AudioSegment.from_ogg(audio_folder.joinpath(audio)) - 12
 				for audio_note, audio in track.instrument.tracks.items()
 			}
 

@@ -35,7 +35,7 @@ class Instrument:
 			num_tracks: int = unpack('<I', fp.read(4))[0]
 			for _ in range(num_tracks):
 				note: int = unpack('<I', fp.read(4))[0] ^ 0x0000FF00
-				audio: str = path.splitext(path.split(read_string(fp))[1])[0] + '.wav'
+				audio: str = path.split(read_string(fp))[1]
 				fp.seek(4, 1)
 				tracks[note] = audio
 
