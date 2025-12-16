@@ -4,8 +4,10 @@ import numpy as np
 
 
 def stretch(segment: AudioSegment, rate: float) -> AudioSegment:
-	samples: np.ndarray = np.array(segment.get_array_of_samples())
-	samples = samples.astype(np.float32) / 32768.0
+	sample_width: int = segment.sample_width
+	max_val: float = float(1 << (8 * sample_width - 1))
+	samples: np.ndarray = np.array(segment.get_array_of_samples(), dtype=np.float32)
+	samples /= max_val
 
 	if segment.channels == 2:
 		left: np.ndarray = samples[::2]
@@ -20,9 +22,14 @@ def stretch(segment: AudioSegment, rate: float) -> AudioSegment:
 	else:
 		y_stretch: np.ndarray = time_stretch(samples, rate=rate)
 
-	y_stretch = np.clip(y_stretch * 32768, -32768, 32767).astype(np.int16)
+	y_stretch = np.clip(y_stretch, -1.0, 1.0)
+	y_stretch = (y_stretch * max_val).astype(np.int16 if sample_width == 2 else np.int32)
 
-	return segment._spawn(y_stretch.tobytes())
+	return segment._spawn(y_stretch.tobytes(), overrides={
+		"frame_rate": segment.frame_rate,
+		"channels": segment.channels,
+		"sample_width": segment.sample_width,
+	})
 
 
 def swing(song: AudioSegment, bpm: int) -> AudioSegment:
